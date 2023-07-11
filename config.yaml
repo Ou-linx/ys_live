@@ -1,12 +1,7 @@
 # 数据库连接信息
 database:
-  user: "root"
-  password: "123456"
-  host: "127.0.0.1"
-  port: "3306"
-  database: "mhylive"
-
-bilibili:
-  uid: "34055779"
-  roomid: "379598"
-  cookie: "LIVE_BUVID=AUTO3916398929235528; balh_remove_pre_ad=; buvid4=59AE0052-A332-614B-2854-B91685FF697776523-022012118-dA2LzjhuWoQ23n13nfATJA%3D%3D; CURRENT_BLACKGAP=0; balh_enable_in_av=; blackside_state=0; buvid_fp_plain=undefined; buvid3=66EC9626-BCFE-4742-A138-06B1E0711CFE148798infoc; b_nut=100; i-wanna-go-feeds=-1; fingerprint3=6f7a2e1d5c7d5439f57c5f87022d6ef1; balh_server_inner=__custom__; rpdid=|(k)~YR)lYY~0J'uYY)lm)R|u; ogv_channel_version=v1; _uuid=EED82A22-89E8-C3F4-CEC1-1721036AA941968215infoc; Hm_lvt_8a6e55dbd2870f0f5bc9194cddf32a02=1672673761; nostalgia_conf=-1; CURRENT_PID=2cf8ced0-cd29-11ed-ad10-8fb6223f01bf; is-2022-channel=1; balh_generate_sub=; balh_mode=default; balh_server_custom_cn=; balh_server_custom_th=; balh_server_custom_hk=; balh_server_custom=https://å‡ºå·®.xyz; balh_server_custom_tw=https://å“”å“©.plus; hit-new-style-dyn=1; hit-dyn-v2=1; go_old_video=-1; fingerprint=d1e0cb125576519f15cd762b4d12c5ed; DedeUserID=163735836; DedeUserID__ckMd5=eb5a69fd7922cbcc; i-wanna-go-back=-1; b_ut=5; FEED_LIVE_VERSION=V8; header_theme_version=CLOSE; CURRENT_QUALITY=64; CURRENT_FNVAL=4048; SESSDATA=812467ca%2C1704421271%2C9b203%2A71oH9Q1GiW-73T0C2ABQWS0QphfrggKGeHrXG4PF6vJWLFeC8EF6OL7qjNfOQ8_r3cFq22zgAAJAA; bili_jct=b0c80292d2597da5656a7c3cc5e8a9fd; bp_video_offset_163735836=816367489362427900; bsource=search_baidu; sid=npm9jz6n; innersign=0; PVID=3; b_lsid=103655B49_189448DB533; buvid_fp=d1e0cb125576519f15cd762b4d12c5ed"
+  user: 'root'
+  password: '123456'
+  host: '127.0.0.1'
+  port: '3306'
+  database: 'mhylive'
