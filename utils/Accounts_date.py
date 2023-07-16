@@ -1,4 +1,6 @@
-from utils.tool import DatabaseConnector
+import json
+
+from utils.tool import DatabaseConnector,Tools
 
 
 class GetAccounts:
@@ -31,7 +33,7 @@ class GetAccounts:
 
     def class_acc(self):        # 账号分类
         for ac in self.alldata:
-            if ac["uid"].__str__() == "34055779" or ac["good_friend"].__str__() == "666":   # 卖萌自己
+            if ac["uid"].__str__() == str(Tools.get_config('bilibili')['uid']) or ac["good_friend"].__str__() == "666":   # 卖萌自己
                 self.boss_acc.append(ac)
             elif ac["is_ok"] is None:
                 self.guard_noacc.append(ac)         # 没有存账号的舰长
@@ -64,14 +66,14 @@ class GetAccounts:
         self.alldata+=self.old_acc       # 掉舰、仅保存的账号
 
 
-    def ret_acc(self):      # 结果输出
+    def rtn_acc(self):      # 结果输出
         GetAccounts.class_acc(self)
         GetAccounts.replace_acc(self)
-        return self.alldata
+        return json.dumps(self.alldata)
 
 
 # a = Accounts.get_alldate()
 # Accounts.seq_acc(a)
-if __name__ == '__main__':
-    a = GetAccounts()
-    print(a.ret_acc())
+# if __name__ == '__main__':
+#     a = GetAccounts()
+#     print(a.rtn_acc())
