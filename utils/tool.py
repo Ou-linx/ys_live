@@ -1,4 +1,3 @@
-import json
 import mysql.connector
 import yaml
 import requests
@@ -6,15 +5,17 @@ import requests
 
 class Tools:
     @staticmethod
-    def read_config(filename='config.yaml'):    # yaml配置文件读取
+    def read_config(filename='../config.yaml'):    # yaml配置文件读取
         with open(filename, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         return config
 
     @staticmethod       # 接口返回信息转json
-    def get_json(url,cookie=None):
-        url = url
-        bda = requests.get(url, cookies=cookie, verify=False).json()
+    def get_json(url,cookie=''):
+        if cookie == '':
+            bda = requests.get(url, cookies=cookie, verify=False).json()
+        else:
+            bda = requests.get(url, verify=False).json()
         return bda
 
     @staticmethod       # 配置文件类别区分提取
@@ -40,7 +41,7 @@ class DatabaseConnector:
 
 
     @staticmethod
-    def connect_to_database():
+    def connect_to_database():  # 连接到数据库
         try:
             DatabaseConnector.cnx = mysql.connector.connect(**DatabaseConnector.config)
             DatabaseConnector.cursor = DatabaseConnector.cnx.cursor()
@@ -56,27 +57,28 @@ class DatabaseConnector:
             DatabaseConnector.connect_to_database()
 
     @staticmethod
-    def run_sql(sqlcmd, params=None):
+    def run_sql(sqlcmd, params=None):       # 执行sql语句
         DatabaseConnector.initialize_database()
         DatabaseConnector.cursor.execute(sqlcmd, params)
-        if DatabaseConnector.cursor.with_rows:
+        if DatabaseConnector.cursor.with_rows:  # 查询语句
             rows = DatabaseConnector.cursor.fetchall()
             column_names = DatabaseConnector.cursor.column_names
             result = []
             for row in rows:
                 result.append(dict(zip(column_names, row)))
             return result
-        else:
+        else:                                   # 增删改语句
+            DatabaseConnector.cnx.commit()
             return DatabaseConnector.cursor.rowcount
 
     @staticmethod
-    def print_results(sqlcmd, params=None):
+    def print_results(sqlcmd, params=None):     # 执行并获取sql语句返回信息
         result = DatabaseConnector.run_sql(sqlcmd, params)
         if isinstance(result, int):
             print(f"受影响的行数：{result}")
+            return f"受影响的行数：{result}"
         else:
-            json_result = json.dumps(result, indent=4, ensure_ascii=False)
-            print(json_result)
+            return result
 
     @staticmethod
     def close_connection():
