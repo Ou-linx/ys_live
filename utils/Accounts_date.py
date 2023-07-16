@@ -35,8 +35,10 @@ class GetAccounts:
                 self.boss_acc.append(ac)
             elif ac["is_ok"] is None:
                 self.guard_noacc.append(ac)         # 没有存账号的舰长
-            elif ac["is_ok"] is not None:     # 其它账号处理
-                if ac["guard_no"] is None and ac["good_friend"].__str__() != "4":
+            elif ac["is_ok"] is not None:     # 卖萌自己以外的账号处理
+                if ac["good_friend"].__str__() == "1" and ac["guard_no"] is not None:
+                    self.more_acc.append(ac)    # 明确不打号的舰长
+                elif ac["guard_no"] is None and ac["good_friend"].__str__() != "4":
                     self.old_acc.append(ac)       # 掉舰、保存账号
                 elif ac['server'].__str__() == "0":
                     self.off_acc.append(ac)     # 官服
@@ -44,19 +46,32 @@ class GetAccounts:
                     self.bili_acc.append(ac)    # B服
                 elif ac['server'].__str__() == '5':
                     self.tiedao_acc.append(ac)  # 铁道
-                else:
-                    self.more_acc.append(ac)    # 其它
+        # 重新按舰长列表排序进行排序
         self.more_acc = GetAccounts.seq_acc(self.more_acc)
         self.tiedao_acc = GetAccounts.seq_acc(self.tiedao_acc)
         self.bili_acc = GetAccounts.seq_acc(self.bili_acc)
         self.off_acc = GetAccounts.seq_acc(self.off_acc)
-        self.boss_acc = GetAccounts.seq_acc(self.boss_acc)
         self.guard_noacc = GetAccounts.seq_acc(self.guard_noacc)
-        self.old_acc = GetAccounts.seq_acc(self.old_acc)
+
+    def replace_acc(self):      # 重新排列整合数据
+        self.alldata = []
+        self.alldata+=self.boss_acc      # 卖萌自己在最上面
+        self.alldata+=self.bili_acc      # B服数量少，在官服上面
+        self.alldata+=self.off_acc       # 官服
+        self.alldata+=self.tiedao_acc    # 铁道
+        self.alldata+=self.more_acc      # 不打号的舰长
+        self.alldata+=self.guard_noacc   # 没存账号的舰长
+        self.alldata+=self.old_acc       # 掉舰、仅保存的账号
+
+
+    def ret_acc(self):      # 结果输出
+        GetAccounts.class_acc(self)
+        GetAccounts.replace_acc(self)
+        return self.alldata
 
 
 # a = Accounts.get_alldate()
 # Accounts.seq_acc(a)
 if __name__ == '__main__':
     a = GetAccounts()
-    a.class_acc()
+    print(a.ret_acc())
