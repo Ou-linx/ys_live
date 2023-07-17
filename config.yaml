@@ -6,6 +6,10 @@ database:
   port: "3306"
   database: "test"
 
+tables:
+  guard_table: "list_aa"
+  acc_table: "list_bb"
+
 bilibili:
   uid: "34055779"
   roomid: "379598"

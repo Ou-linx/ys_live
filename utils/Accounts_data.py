@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from utils.tool import DatabaseConnector,Tools
@@ -6,19 +7,21 @@ from utils.tool import DatabaseConnector,Tools
 class GetAccounts:
     @staticmethod
     def get_alldate():  # 获取全部账号信息
-        sql = "select * from list_aa left join list_bb on list_aa.uid = list_bb.bili_uid union select * from list_aa right join list_bb on list_aa.uid = list_bb.bili_uid"
-        re = DatabaseConnector.print_results(sql)
+        guard_table = Tools.get_tables()['guard_table']
+        acc_table = Tools.get_tables()['acc_table']
+        sql = f"select * from {guard_table} left join {acc_table} on {guard_table}.uid = {acc_table}.bili_uid union select * from {guard_table} right join {acc_table} on {guard_table}.uid = {acc_table}.bili_uid"
+        re = DatabaseConnector.data_results(sql)
         return re
 
     @staticmethod
-    def seq_acc(list):      # 数据重新排序
-        for a in range(len(list)-1):
-            for b in range(len(list)-1-a):
-                if list[b+1]['guard_no'] is None:
+    def seq_acc(data_list):      # 数据重新排序
+        for a in range(len(data_list) - 1):
+            for b in range(len(data_list) - 1 - a):
+                if data_list[b + 1]['guard_no'] is None:
                     pass
-                elif list[b]['guard_no'] is None or list[b]['guard_no'] > list[b+1]['guard_no']:
-                    list[b],list[b+1] = list[b+1],list[b]
-        return list
+                elif data_list[b]['guard_no'] is None or data_list[b]['guard_no'] > data_list[b + 1]['guard_no']:
+                    data_list[b],data_list[b + 1] = data_list[b + 1],data_list[b]
+        return data_list
 
     def __init__(self):
         self.more_acc = []
@@ -28,12 +31,15 @@ class GetAccounts:
         self.boss_acc = []
         self.guard_noacc = []
         self.old_acc = []
+        self.del_acc = []
         self.alldata = GetAccounts.get_alldate()
 
 
     def class_acc(self):        # 账号分类
         for ac in self.alldata:
-            if ac["uid"].__str__() == str(Tools.get_config('bilibili')['uid']) or ac["good_friend"].__str__() == "666":   # 卖萌自己
+            if ac["is_del"].__str__() == "1":
+                self.del_acc.append(ac)     # 标记删除数据
+            elif ac["uid"].__str__() == str(Tools.get_config('bilibili')['uid']) or ac["good_friend"].__str__() == "666":   # 卖萌自己
                 self.boss_acc.append(ac)
             elif ac["is_ok"] is None:
                 self.guard_noacc.append(ac)         # 没有存账号的舰长
@@ -72,8 +78,36 @@ class GetAccounts:
         return json.dumps(self.alldata)
 
 
+class SetAccounts:
+    def __init__(self):
+        self.acc_table = Tools.get_tables()['acc_table']
+        self.insert_sql = f"insert into {self.acc_table} (`nick_name`,`bili_uid`,`username`,`password`,`info`,`server`,`good_friend`,`update_time`) values"
+        self.update_sql = f"update {self.acc_table} set"
+
+    # 增加舰长数据
+    def add_acc(self,nick_name, bili_uid, username, password, info, server, good_friend=None):
+        self.insert_sql = self.insert_sql+f"('{nick_name}','{bili_uid}','{username}','{password}','{info}','{server}','{good_friend}','{datetime.date.today()}')".replace("\'None\'","NULL")
+        return DatabaseConnector.data_results(self.insert_sql)
+
+
+    # 更新舰长数据
+    def up_acc(self,up_data):
+        end = ""
+        for d in up_data:
+            if d == "ac_id":
+                end = f"`update_time` = '{datetime.date.today()}' where id = {up_data[d]}"
+            elif up_data[d] is None or up_data[d] == "" or d == "update_time":
+                pass
+            else:
+                self.update_sql = self.update_sql + f" `{d}` = '{up_data[d]}',"
+        self.update_sql = self.update_sql + end
+        return DatabaseConnector.data_results(self.update_sql)
+
 # a = Accounts.get_alldate()
 # Accounts.seq_acc(a)
 # if __name__ == '__main__':
 #     a = GetAccounts()
 #     print(a.rtn_acc())
+# a = {"ac_id":2,"nick_name":"昵称", "username":"账号", "password":"密码", "update_time":"2022-11-01"}
+# b = SetAccounts()
+# print(b.up_acc(a))

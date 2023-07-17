@@ -5,7 +5,7 @@ import requests
 
 class Tools:
     @staticmethod
-    def read_config(filename='./config.yaml'):    # yaml配置文件读取
+    def read_config(filename='../config.yaml'):    # yaml配置文件读取
         with open(filename, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         return config
@@ -32,6 +32,15 @@ class Tools:
             name, value = line.strip().split('=', 1)
             cookies[name] = value  # 为字典cookies添加内容
         return cookies
+
+    @staticmethod
+    def get_tables():
+        table_list = {}
+        tmp = Tools.get_config('tables')
+        for a in tmp:
+            if "table" in a:
+                table_list[a] = tmp[a]
+        return table_list
 
 
 class DatabaseConnector:
@@ -72,7 +81,8 @@ class DatabaseConnector:
             return DatabaseConnector.cursor.rowcount
 
     @staticmethod
-    def print_results(sqlcmd, params=None):     # 执行并获取sql语句返回信息
+    def data_results(sqlcmd, params=None):     # 执行并获取sql语句返回信息
+        print(sqlcmd)
         result = DatabaseConnector.run_sql(sqlcmd, params)
         if isinstance(result, int):
             print(f"受影响的行数：{result}")

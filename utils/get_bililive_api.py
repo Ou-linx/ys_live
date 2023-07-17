@@ -42,10 +42,11 @@ class BiliLive:
 
 
     @staticmethod
-    def save_guad():    # 保存舰长信息
+    def save_guard():    # 保存舰长信息
+        guard_table = Tools.get_tables()['guard_table']
         jzs = BiliLive.get_guard_list(**Tools.get_config('bilibili'))
         for jz_list in jzs:
-            sql = f"""INSERT INTO list_aa (uid, bili_name, guard_no, guard_level, medal_level)
+            sql = f"""INSERT INTO {guard_table} (uid, bili_name, guard_no, guard_level, medal_level)
 VALUES ('{jz_list["uid"]}', '{jz_list["username"]}', '{jz_list["rank"]}', '{jz_list["guard_level"]}', '{jz_list["medal_info"]["medal_level"]}')
 ON DUPLICATE KEY UPDATE
   bili_name = IF(VALUES(bili_name) = bili_name, bili_name, VALUES(bili_name)),
@@ -53,8 +54,8 @@ ON DUPLICATE KEY UPDATE
   guard_level = IF(VALUES(guard_level) = guard_level, guard_level, VALUES(guard_level)),
   medal_level = IF(VALUES(medal_level) = medal_level, medal_level, VALUES(medal_level));
 """
-            re = DatabaseConnector.print_results(sql)
+            re = DatabaseConnector.data_results(sql)
             print(re)
 
 
-BiliLive.save_guad()
+BiliLive.save_guard()

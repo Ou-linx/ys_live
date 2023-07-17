@@ -1,10 +1,12 @@
 import asyncio
 import threading
 from flask import Flask, render_template
+from flask_cors import CORS
 import websockets
 
 # 创建 Flask 应用程序
 app = Flask(__name__)
+CORS(app)
 
 # 定义一个全局的客户端连接集合，用于存储所有的客户端连接
 clients = set()
