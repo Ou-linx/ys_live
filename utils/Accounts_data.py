@@ -103,6 +103,17 @@ class SetAccounts:
         self.update_sql = self.update_sql + end
         return DatabaseConnector.data_results(self.update_sql)
 
+    def del_acc(self,ac_id):       # 删除舰长数据
+        del_sql = self.update_sql + f" `is_del` = 1 where id = {ac_id}"
+        return DatabaseConnector.data_results(del_sql)
+
+    def set_state(self,ac_id):  # 更新打号状态，传入id，为0时更新全部；为其它时更新指定id下的值（0，1互换）
+        if str(ac_id) == "0":
+            state_sql = self.update_sql + f" `is_ok` = 0"
+        else:
+            state_sql = self.update_sql + f" `is_ok` = CASE WHEN is_ok = 0 THEN 1 WHEN is_ok = 1 THEN 0 END where id = {ac_id};"
+        return DatabaseConnector.data_results(state_sql)
+
 # a = Accounts.get_alldate()
 # Accounts.seq_acc(a)
 # if __name__ == '__main__':
@@ -110,4 +121,5 @@ class SetAccounts:
 #     print(a.rtn_acc())
 # a = {"ac_id":2,"nick_name":"昵称", "username":"账号", "password":"密码", "update_time":"2022-11-01"}
 # b = SetAccounts()
-# print(b.up_acc(a))
+# # print(b.up_acc(a))
+# b.set_state(1)
