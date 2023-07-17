@@ -45,6 +45,7 @@ class BiliLive:
     def save_guard():    # 保存舰长信息
         guard_table = Tools.get_tables()['guard_table']
         jzs = BiliLive.get_guard_list(**Tools.get_config('bilibili'))
+        DatabaseConnector.data_results(f"update {guard_table} set `guard_no` = 9999999 WHERE `guard_no` <> 9999999")
         for jz_list in jzs:
             sql = f"""INSERT INTO {guard_table} (uid, bili_name, guard_no, guard_level, medal_level)
 VALUES ('{jz_list["uid"]}', '{jz_list["username"]}', '{jz_list["rank"]}', '{jz_list["guard_level"]}', '{jz_list["medal_info"]["medal_level"]}')

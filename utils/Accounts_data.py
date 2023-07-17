@@ -39,7 +39,7 @@ class GetAccounts:
         for ac in self.alldata:
             if ac["is_del"].__str__() == "1":
                 self.del_acc.append(ac)     # 标记删除数据
-            elif ac["uid"].__str__() == str(Tools.get_config('bilibili')['uid']) or ac["good_friend"].__str__() == "666":   # 卖萌自己
+            elif ac["bili_uid"].__str__() == str(Tools.get_config('bilibili')['uid']) or ac["good_friend"].__str__() == "666":   # 卖萌自己
                 self.boss_acc.append(ac)
             elif ac["is_ok"] is None:
                 self.guard_noacc.append(ac)         # 没有存账号的舰长
