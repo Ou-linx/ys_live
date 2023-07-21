@@ -5,7 +5,7 @@ import requests
 
 class Tools:
     @staticmethod
-    def read_config(filename='../config.yaml'):    # yaml配置文件读取
+    def read_config(filename='./config.yaml'):    # yaml配置文件读取
         with open(filename, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         return config

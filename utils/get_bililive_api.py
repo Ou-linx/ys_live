@@ -59,4 +59,4 @@ ON DUPLICATE KEY UPDATE
             print(re)
 
 
-BiliLive.save_guard()
+# BiliLive.save_guard()

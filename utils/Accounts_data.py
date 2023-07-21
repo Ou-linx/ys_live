@@ -45,8 +45,10 @@ class GetAccounts:
                 self.guard_noacc.append(ac)         # 没有存账号的舰长
             elif ac["is_ok"] is not None:     # 卖萌自己以外的账号处理
                 if ac["good_friend"].__str__() == "1" and ac["guard_no"] is not None:
+                    ac["is_ok"] = None
                     self.more_acc.append(ac)    # 明确不打号的舰长
                 elif ac["guard_no"] is None and ac["good_friend"].__str__() != "4":
+                    ac["is_ok"] = None
                     self.old_acc.append(ac)       # 掉舰、保存账号
                 elif ac['server'].__str__() == "0":
                     self.off_acc.append(ac)     # 官服
