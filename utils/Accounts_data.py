@@ -1,4 +1,4 @@
-import datetime
+from datetime import date
 import json
 
 from utils.tool import DatabaseConnector,Tools
@@ -86,7 +86,12 @@ class GetAccounts:
     def rtn_acc(self):      # 结果输出
         GetAccounts.class_acc(self)
         GetAccounts.replace_acc(self)
-        return json.dumps(self.alldata)
+        return json.dumps(self.alldata, default=GetAccounts.handle_date)
+
+    @staticmethod   # sql结果中日期处理
+    def handle_date(obj):
+        if isinstance(obj, date):
+            return obj.isoformat()
 
 
 class SetAccounts:
@@ -97,7 +102,7 @@ class SetAccounts:
 
     # 增加舰长数据
     def add_acc(self,nick_name, bili_uid, username, password, info, server, good_friend=None):
-        self.insert_sql = self.insert_sql+f"('{nick_name}','{bili_uid}','{username}','{password}','{info}','{server}','{good_friend}','{datetime.date.today()}')".replace("\'None\'","NULL")
+        self.insert_sql = self.insert_sql+f"('{nick_name}','{bili_uid}','{username}','{password}','{info}','{server}','{good_friend}','{date.today()}')".replace("\'None\'","NULL")
         return DatabaseConnector.data_results(self.insert_sql)
 
 
@@ -106,7 +111,7 @@ class SetAccounts:
         end = ""
         for d in up_data:
             if d == "id":
-                end = f"`update_time` = '{datetime.date.today()}' where id = {up_data[d]}"
+                end = f"`update_time` = '{date.today()}' where id = {up_data[d]}"
             elif up_data[d] is None or up_data[d] == "" or d == "update_time":
                 pass
             else:
