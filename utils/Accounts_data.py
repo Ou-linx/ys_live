@@ -23,6 +23,15 @@ class GetAccounts:
                     data_list[b],data_list[b + 1] = data_list[b + 1],data_list[b]
         return data_list
 
+
+    @staticmethod
+    def get_acc_date(acc_id):  # 获取单个账号信息
+        guard_table = Tools.get_tables()['guard_table']
+        acc_table = Tools.get_tables()['acc_table']
+        sql = f"select * from {guard_table} right join {acc_table} on {guard_table}.uid = {acc_table}.bili_uid where {acc_table}.id = {acc_id}"
+        re = DatabaseConnector.data_results(sql)
+        return re
+
     def __init__(self):
         self.more_acc = []
         self.tiedao_acc = []
@@ -96,7 +105,7 @@ class SetAccounts:
     def up_acc(self,up_data):
         end = ""
         for d in up_data:
-            if d == "ac_id":
+            if d == "id":
                 end = f"`update_time` = '{datetime.date.today()}' where id = {up_data[d]}"
             elif up_data[d] is None or up_data[d] == "" or d == "update_time":
                 pass
