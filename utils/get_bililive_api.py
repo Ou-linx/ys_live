@@ -1,7 +1,10 @@
-from tool import Tools, DatabaseConnector
+from utils.tool import Tools, DatabaseConnector
 
 # 注：**more均为接收配置文件多余参数的适应参数
 class BiliLive:
+    def __init__(self):
+        self.conf = Tools.get_config('bilibili')
+
     @staticmethod
     def get_guard_sum(roomid=379598,uid=34055779,**more):    # 获取舰长数量
         url = f"https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topList?roomid={roomid}&ruid={uid}&page_size=1&page=1"
@@ -14,10 +17,10 @@ class BiliLive:
 
     @staticmethod
     def get_fans_sum(uid=34055779,**more):    # 获取粉丝数量
-        url = f"https://api.bilibili.com/x/relation/followers?vmid={uid}"
-        bda = Tools.get_json(url,cookie=Tools.cookie_set())
+        url = f"https://api.bilibili.com/x/relation/stat?vmid={uid}"
+        bda = Tools.get_json(url)
         print(bda)
-        fans = bda["data"]["total"]
+        fans = bda["data"]["follower"]
         print(fans)
         return fans
 
