@@ -65,6 +65,7 @@ class GetAccounts:
                     self.bili_acc.append(ac)    # B服
                 elif ac['server'].__str__() == '5':
                     ac['info'] = f"[铁道]：{ac['info']}"
+                    ac['server'] = 1
                     self.tiedao_acc.append(ac)  # 铁道
         # 重新按舰长列表排序进行排序
         self.more_acc = GetAccounts.seq_acc(self.more_acc)
@@ -102,7 +103,7 @@ class SetAccounts:
         self.update_sql = f"update {self.acc_table} set"
 
     # 增加舰长数据
-    def add_acc(self,nick_name, bili_uid, username, password, info, server, good_friend=None):
+    def add_acc(self,nick_name, bili_uid, username, password, info, server, good_friend=None, **more):
         self.insert_sql = self.insert_sql+f"('{nick_name}','{bili_uid}','{username}','{password}','{info}','{server}','{good_friend}','{date.today()}')".replace("\'None\'","NULL")
         return DatabaseConnector.data_results(self.insert_sql)
 
