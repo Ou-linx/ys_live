@@ -9,7 +9,6 @@ class BiliLive:
     def get_guard_sum(roomid=379598,uid=34055779,**more):    # 获取舰长数量
         url = f"https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topList?roomid={roomid}&ruid={uid}&page_size=1&page=1"
         bda = Tools.get_json(url)
-        print(bda)
         guards = bda["data"]["info"]["num"]
         print(guards)
         return guards

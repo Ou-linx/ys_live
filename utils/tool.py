@@ -13,9 +13,9 @@ class Tools:
     @staticmethod       # 接口返回信息转json
     def get_json(url,cookie=''):
         if cookie == '':
-            bda = requests.get(url, cookies=cookie, verify=False).json()
-        else:
             bda = requests.get(url, verify=False).json()
+        else:
+            bda = requests.get(url, cookies=cookie, verify=False).json()
         return bda
 
     @staticmethod       # 配置文件类别区分提取
