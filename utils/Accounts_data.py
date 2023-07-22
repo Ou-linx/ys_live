@@ -61,9 +61,10 @@ class GetAccounts:
                     self.old_acc.append(ac)       # 掉舰、保存账号
                 elif ac['server'].__str__() == "0":
                     self.off_acc.append(ac)     # 官服
-                elif ac['server'].__str__() == '1':
+                elif ac['server'].__str__() == '1' or ac['server'].__str__() == '2':
                     self.bili_acc.append(ac)    # B服
                 elif ac['server'].__str__() == '5':
+                    ac['info'] = f"[铁道]：{ac['info']}"
                     self.tiedao_acc.append(ac)  # 铁道
         # 重新按舰长列表排序进行排序
         self.more_acc = GetAccounts.seq_acc(self.more_acc)
