@@ -85,17 +85,21 @@ class DatabaseConnector:
         print(sqlcmd)
         result = DatabaseConnector.run_sql(sqlcmd, params)
         if isinstance(result, int):
+            DatabaseConnector.close_connection()
             print(f"受影响的行数：{result}")
             return f"受影响的行数：{result}"
         else:
+            DatabaseConnector.close_connection()
             return result
 
     @staticmethod
     def close_connection():
         if DatabaseConnector.cursor:
             DatabaseConnector.cursor.close()
+            DatabaseConnector.cursor = None
         if DatabaseConnector.cnx:
             DatabaseConnector.cnx.close()
+            DatabaseConnector.cnx = None
 
 # a = Tools.cookie_set()
 # print(a)
