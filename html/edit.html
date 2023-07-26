@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>信息添加/修改</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.9/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-container fluid class="pink-bg">
+        <h1 class="text-center font-weight-bold mb-5">信息添加/修改</h1>
+        <v-row justify="center">
+          <v-col cols="12" md="8">
+            <v-card class="rounded-border">
+              <v-card-text>
+                <v-form ref="form" v-model="valid">
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field v-model="jzname" label="舰长昵称（默认B站用户名）" style="font-size: 25px;"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field v-model="user" label="* 账号" required style="font-size: 25px;"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field v-model="pass" label="* 密码" required style="font-size: 25px;"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field v-model="uid" :readonly="biliUidExists" label="B站UID" style="font-size: 25px;"></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-textarea v-model="tips" label="备注" rows="2" style="font-size: 25px;"></v-textarea>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-select v-model="server" :items="serverOptions" label="选择服务器" style="font-size: 16px;"></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-select v-model="goodFriend" :items="goodFriendOptions" label="额外信息" style="font-size: 16px;"></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="text-center">
+                      <v-btn @click="saveData" :disabled="!valid" class="mt-5" color="primary" style="width: 80%;">确定并提交</v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="text-right">
+                      <div style="margin-top: 10px;"></div>
+                      <a href="#" @click="confirmDelete" class="text-grey ml-3">删除</a>
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app>
+
+    <v-dialog v-model="dialogDeleteConfirm" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">确认删除</v-card-title>
+        <v-card-text>您确定要删除此账号吗？删除后将无法恢复。</v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="deleteAccount" :disabled="deleting">确认</v-btn>
+          <v-btn color="grey" @click="dialogDeleteConfirm = false" :disabled="deleting">取消</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogSuccess" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">操作成功</v-card-title>
+        <v-card-text>操作成功！</v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="goToHome">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.9/dist/vuetify.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data() {
+        return {
+          valid: true,
+          jzname: '',
+          user: '',
+          pass: '',
+          uid: '',
+          tips: '',
+          server: 0,
+          serverOptions: [
+            { text: '官服', value: 0 },
+            { text: 'B服', value: 1 },
+            { text: '其它服务器', value: 2 },
+            { text: '星铁', value: 5 }
+          ],
+          goodFriend: 0,
+          goodFriendOptions: [
+            { text: '打号', value: 0 },
+            { text: '不打号', value: 1 },
+            { text: '额外接单', value: 4 },
+            { text: '自己的号', value: 666 }
+          ],
+          dialogDeleteConfirm: false,
+          dialogSuccess: false,
+          deleting: false
+        }
+      },
+      computed: {
+        biliUidExists() {
+          return !!this.uid;
+        }
+      },
+      mounted() {
+        // 页面加载时获取 GET 参数并发送请求
+        const id = this.getQueryString('id');
+        const uid = this.getQueryString('uid');
+        if (id === "null" && uid !== "null") {
+          // 如果id为null，且uid不为null，则自动填入B站UID输入框
+          this.uid = uid;
+        } else if (id && uid) {
+          this.getDataFromServer(id, uid);
+        }
+      },
+      methods: {
+        getQueryString(name) {
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          return urlSearchParams.get(name);
+        },
+        async getDataFromServer(id, uid) {
+          try {
+            const response = await fetch(`./edit?id=${id}&uid=${uid}`);
+            const data = await response.json();
+            if (data.length > 0) {
+              const info = data[0];
+              this.jzname = info.nick_name || info.bili_name;
+              this.user = info.username;
+              this.pass = info.password;
+              this.uid = info.bili_uid.toString();
+              this.tips = info.info || '';
+              this.server = info.server;
+              this.goodFriend = info.good_friend;
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        },
+        async saveData() {
+          try {
+            const postData = {
+              id: this.getQueryString('id'),
+              nick_name: this.jzname || null,
+              username: this.user || null,
+              password: this.pass || null,
+              bili_uid: this.uid || null,
+              info: this.tips || null,
+              server: this.server,
+              good_friend: this.goodFriend
+            };
+
+            const response = await fetch('./edit', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(postData)
+            });
+
+            if (response.ok) {
+              this.dialogSuccess = true;
+            } else {
+              console.error('Data submission failed.');
+            }
+          } catch (error) {
+            console.error('Error submitting data:', error);
+          }
+        },
+        confirmDelete() {
+          this.dialogDeleteConfirm = true;
+        },
+        async deleteAccount() {
+          try {
+            this.deleting = true;
+            const id = this.getQueryString('id');
+            if (id) {
+              const response = await fetch(`./del?id=${id}`);
+              const data = await response.json();
+              if (data.code === 200) {
+                this.dialogDeleteConfirm = false;
+                this.dialogSuccess = true;
+              } else {
+                alert('删除失败');
+              }
+            } else {
+              alert('无效的账号');
+            }
+          } catch (error) {
+            console.error('Error deleting account:', error);
+          } finally {
+            this.deleting = false;
+            this.dialogDeleteConfirm = false;
+          }
+        },
+        goToHome() {
+          window.location.href = '/';
+        }
+      }
+    })
+  </script>
+
+  <style>
+    .pink-bg {
+      background-color: pink;
+      min-height: 100vh;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .rounded-border {
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-grey {
+      color: grey;
+    }
+
+    .row + .row {
+      margin-top: 0;
+    }
+  </style>
+</body>
+</html>

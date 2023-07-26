@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>舰长列表</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+<style>
+body {
+    background-color: pink;
+}
+.table {
+--bs-table-bg: #cff4fc;
+}
+thead {
+    --bs-table-color: white;
+    --bs-table-bg: blue;
+}
+.table thead th {
+    text-align: center;
+    vertical-align: middle;
+}
+.table td {
+    text-align: center;
+}
+.table td, .table th {
+  vertical-align: text-top;
+}
+.row-cyan {
+--bs-table-bg: #0dfdc6;
+}
+.row-purple {
+--bs-table-bg: #b98eff;
+}
+.row-yellow {
+--bs-table-bg: #e7ff5b;
+}
+.row-black {
+--bs-table-bg: black !important;
+}
+.row-black td {
+    color: white;
+}
+.row-null-guard {
+--bs-table-bg: #fecba1;
+}
+.row-null-guard td {
+    color: black;
+}
+.custom-table td, .custom-table th {
+    vertical-align: text-top;
+}
+.top-table {
+    --bs-table-color: : black;
+    --bs-table-bg: transparent;
+    border-color: blue;
+  }
+</style>
+</head>
+<body>
+<div id="app" class="container">
+        <table class="fs-5 mt-4 mb-0 table table-bordered border-primary">
+        <thead class="top-table">
+            <tr style="text-align: center;">
+                <th class="col-4">粉丝数</th>
+                <th class="col-4">舰长数</th>
+                <th class="col-4">打号舰长数</th>
+            </tr>
+        </thead>
+        <tbody class="top-table">
+            <tr style="text-align: center;">
+                <td>{{ fans }}</td>
+                <td>{{ guards }}</td>
+                <td>{{ completedCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <div class="mt-2 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-primary me-md-2" type="button" @click="addAcc()">新增账号</button>
+        <button class="btn btn-primary" type="button" id="all" @click="updateState('0')">一键重置打号进度</button>
+    </div>
+    <div>
+    
+        <table class="mt-2 table table-bordered">
+        <thead>
+            <tr>
+                <th>舰长</th>
+                <th>账号</th>
+                <th>密码</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="item in filteredItems" :key="item.id" :class="getRowClass(item)">
+                <td :class="{ 'text-white': item.is_ok === 1, 'text-black': item.is_ok === null && item.guard_no !== null }" @click="redirectToEdit(item)">{{ item.nick_name || item.bili_name }}</td>
+                <td :class="{ 'text-white': item.is_ok === 1, 'text-black': item.is_ok === null && item.guard_no !== null }" @click="copyInnerTextOfCell">{{ item.username }}</td>
+                <td :class="{ 'text-white': item.is_ok === 1, 'text-black': item.is_ok === null && item.guard_no !== null }" @click="copyInnerTextOfCell">{{ item.password }}</td>
+                <td :class="{ 'text-white': item.is_ok === 1, 'text-black': item.is_ok === null && item.guard_no !== null }">{{ item.info }}</td>
+                <td>
+                    <button v-if="item.is_ok === 0" class="btn btn-outline-success" @click="updateState(item.id)">完成</button>
+                    <button v-else-if="item.is_ok === 1" class="btn btn-outline-danger" @click="updateState(item.id)">取消</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+new Vue({
+    el: '#app',
+    data: {
+        items: [
+        ],
+        fans: 0,
+        guards: 0,
+        completedCount: 0,
+    },
+    computed: {
+        filteredItems() {
+            return this.items.filter(item => item.is_del !== 1);
+        }
+    },
+    methods: {
+        getRowClass(item) {
+            if (item.is_ok === 1) {
+                return 'row-black';
+            } else if (item.is_ok === null && item.guard_no !== null) {
+                return 'row-null-guard';
+            } else if (item.is_ok === 0 && item.server === 0 && item.bili_uid !== 34055779) {
+                return 'row-cyan';
+            } else if (item.is_ok === 0 && item.server === 1) {
+                return 'row-purple';
+            } else if (item.is_ok === 0 && item.bili_uid === 34055779) {
+                return 'row-yellow';
+            } else {
+                return '';
+            }
+        },
+        updateState(id) {
+            fetch(`./up_state?id=${id}`)
+                .then(response => response.json())
+                .then(data => this.items = data)
+                .catch(error => console.error(error));
+        },
+        copyInnerTextOfCell(event) {
+            let innerText = event.target.innerText;
+            if (innerText.trim() !== '') {
+                var tmpInput = document.createElement("input");
+                document.body.appendChild(tmpInput);
+                tmpInput.value = innerText;
+                tmpInput.select();
+                document.execCommand("cut");
+                tmpInput.remove();
+                this.showMsg("复制成功：" + innerText);
+            }
+        },
+        showMsg(val, time) {
+            if (!document.getElementById('parent_pop_up')) {
+                var parent_pop_up = document.createElement('div');
+                parent_pop_up.id = "parent_pop_up";
+                parent_pop_up.style.cssText = "position: fixed; z-index: 9999; bottom: 5rem; width: 100%;";
+                var poo_up = document.createElement('div');
+                poo_up.id = 'poo_up';
+                poo_up.style.cssText = 'height: 1rem; margin:0 auto; text-align: center;';
+                var span = document.createElement('span');
+                span.style.cssText = 'background-color: rgba(0,0,0,0.6); padding: 0.2rem 0.35rem; letter-spacing: 3px; border-radius: 10px; color: #FFFFFF; font-size: 2.8rem; text-align: center;';
+                span.innerHTML = val;
+                poo_up.appendChild(span);
+                parent_pop_up.appendChild(poo_up);
+                document.body.appendChild(parent_pop_up);
+                if (time == null || time == '') {
+                    time = 1500;
+                }
+                setTimeout(function () {
+                    this.hideMsg();
+                }.bind(this), time);
+            }
+        },
+        hideMsg() {
+            var pop = document.getElementById('parent_pop_up');
+            pop.style.display = 'none';
+            document.body.removeChild(pop);
+        },
+        // 获取粉丝数和舰长数数据
+        fetchAssInfo() {
+            fetch('./ass_info')
+                .then(response => response.json())
+                .then(data => {
+                    this.fans = data.fans;
+                    this.guards = data.guards;
+                    this.countCompleted();
+                })
+                .catch(error => console.error(error));
+        },
+        // 统计下方按钮的总个数
+        countCompleted() {
+            this.completedCount = this.items.reduce((count, item) => {
+                if (item.is_ok !== null) {
+                    count++;
+                }
+                return count;
+            }, 0);
+        },
+        // 点击舰长文字的事件处理程序
+        redirectToEdit(item) {
+            let url = './ed?';
+            url += `id=${item.id}&uid=${item.uid}`;
+            window.location.href = url;
+        },
+        // 新增账号
+        addAcc() {
+            let url = './ed';
+            window.location.href = url;
+        },
+    },
+    mounted() {
+        // Make a request to the API endpoint and fetch data
+        fetch('./index')
+            .then(response => response.json())
+            .then(data => {
+                this.items = data;
+                this.fetchAssInfo();
+            })
+            .catch(error => console.error(error));
+    }
+});
+
+</script>
+</html>
