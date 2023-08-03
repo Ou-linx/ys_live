@@ -47,7 +47,7 @@ class BiliLive:
     def save_guard():    # 保存舰长信息
         guard_table = Tools.get_tables()['guard_table']
         jzs = BiliLive.get_guard_list(**Tools.get_config('bilibili'))
-        DatabaseConnector.data_results(f"update {guard_table} set `guard_no` = 9999999 WHERE `guard_no` <> 9999999")
+        DatabaseConnector.data_results(f"update {guard_table} set `guard_no` = NULL WHERE `guard_no` IS NOT NULL")
         DatabaseConnector.data_results(f"ALTER TABLE {guard_table} AUTO_INCREMENT = 1;")  # 修正自增起点
         for jz_list in jzs:
             sql = f"""INSERT INTO {guard_table} (uid, bili_name, guard_no, guard_level, medal_level)
