@@ -9,7 +9,7 @@
 | password    | varchar(100) | 密码                       |
 | info        | varchar(255) | 备注                       |
 | server      | int          | 0=官服；1=B服；5=星铁           |
-| good_friend | int          | 为1不打号；为4为额外接单；为666则是卖萌自己 |
+| good_friend | int          | 为1不打号；为4为额外接单；为666则是主播自己 |
 | is_ok       | int          |                          |
 | update_time | date         | 数据更新时间（手动录入则更新）          |
 | is_del      | int          | 逻辑删除                     |

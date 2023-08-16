@@ -55,7 +55,7 @@ def api(subpath):
         if request.method == 'POST':
             data = request.get_data().decode('utf-8')
             a = SetAccounts()
-            if json.loads(data)["id"] is None:
+            if json.loads(data)["id"] is None or json.loads(data)["id"] == "null":
                 a.add_acc(**json.loads(data))
             else:
                 a.up_acc(json.loads(data))
