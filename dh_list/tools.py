@@ -18,4 +18,13 @@ class AccTool:
             "update_time": sel_data.update_time,  # 更新时间
             "is_ok": sel_data.is_ok,  # 打号完成标志
         }
+        print(res_json)
         return res_json
+
+    @staticmethod
+    def res_json_msg(code="500", msg="server error"):
+        json_message = {
+            "code": code,
+            "msg": msg,
+        }
+        return json_message
