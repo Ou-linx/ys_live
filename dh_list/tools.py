@@ -5,7 +5,7 @@ class AccTool:
             "guard_id": sel_data.guard_id.id,  # 舰长表id
             "guard_bili_uid": sel_data.guard_id.bili_uid,  # 舰长b站uid
             "guard_bili_name": sel_data.guard_id.Bili_name,  # B站用户名
-            "guard_nick_name": sel_data.guard_id.nick_name,  # 舰长自定义名称
+            "guard_nick_name": sel_data.nickname_set.all(),  # 舰长自定义名称
             "guard_rank": sel_data.guard_id.guard_rank,  # 排行榜
             "guard_level": sel_data.guard_id.guard_level,  # 舰长等级
             "guard_medal_level": sel_data.guard_id.guard_medal,  # 粉丝牌等级

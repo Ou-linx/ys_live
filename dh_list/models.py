@@ -1,12 +1,13 @@
 from django.db import models
 
+from users.models import Userconf
+
 
 # Create your models here.
 
 class GuardList(models.Model):  # 舰长列表
     bili_uid = models.IntegerField()  # b站uid
     Bili_name = models.CharField(max_length=30, unique=True)  # b站用户名
-    nick_name = models.CharField(max_length=30, null=True)  # 自定义昵称
     guard_rank = models.IntegerField()  # 舰长排行榜
     guard_level = models.IntegerField()  # 舰长等级（舰长、提督、总督）
     guard_medal = models.IntegerField()  # 粉丝牌等级
@@ -17,7 +18,6 @@ class GuardList(models.Model):  # 舰长列表
 
 
 class GameAccount(models.Model):  # 账号表
-    guard_id = models.ForeignKey(GuardList, on_delete=models.SET_NULL, null=True)  # 关联舰长列表id 允许为空（不是舰长的号）
     classes = ((1, '原神官服'), (2, '原神B服'), (3, '崩铁'), (99, '其它'))
     game_class = models.IntegerField(choices=classes, default=99)  # 账号分类：1原神官服，2原神b服，3崩铁，99其它
     game_acc = models.CharField(max_length=30)  # 账号
@@ -31,3 +31,20 @@ class GameAccount(models.Model):  # 账号表
 
     class Meta:
         db_table = 'dhlist_account'
+
+
+class Nickname(models.Model):
+    acc_id = models.OneToOneField(GameAccount, on_delete=models.SET_NULL, null=True, default=None)
+    guard_id = models.ForeignKey(GuardList, on_delete=models.SET_NULL, null=True, default=None)
+    nick_name = models.CharField(max_length=30, default='', null=True)
+
+    class Neta:
+        db_table = 'dhlist_nickname'
+
+
+class TableColor(models.Model):
+    user_id = models.OneToOneField(Userconf)
+    my_color = models.CharField(max_length=40)
+    genshin_color = models.CharField(max_length=40)
+    genshin_bili_color = models.CharField(max_length=40)
+    honkaisr_color = models.CharField(max_length=40)
