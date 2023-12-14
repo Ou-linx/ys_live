@@ -23,9 +23,10 @@ import users.urls
 import dh_list.urls
 
 urlpatterns = [
+                  path('', users.urls.views.index),
                   path('admin/', admin.site.urls),
                   path('user/', include(users.urls)),
-                  path('dhlist/', include(dh_list.urls))
+                  path('dhlist/', include(dh_list.urls)),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

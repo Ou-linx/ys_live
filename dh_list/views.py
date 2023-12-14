@@ -5,20 +5,29 @@ from dh_list.tools import AccTool
 
 
 # Create your views here.
+def is_logined(func):     # 判断是否登录
+    def wapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:   # 判断状态是否为未登录
+            return redirect()
+        else:
+            return func(request, *args, **kwargs)
+    return wapper
+
 
 def add_account_api(request):  # 账号增加/修改
     if request.method == 'POST':
+        user_id = request.user.id
         ret_msg = "账号添加成功！"
         try:
             print(request.POST)
             acc = GameAccount()
-            nick = Nickname()
-            if GameAccount.objects.filter(id=request.POST.get("acc_id", "null")):
+            nick = LinkAccount()
+            if GameAccount.objects.filter(id=request.POST.get("acc_id", "null")):       # 账号存在则进行修改
                 acc = GameAccount.objects.get(id=request.POST.get("acc_id", "null"))
-                nick = Nickname.objects.get(id=acc.nickname.id)
+                nick = LinkAccount.objects.get(id=acc.nickname.id)
                 ret_msg = "账号修改成功！"
             acc.game_acc = request.POST.get('game_acc')  # 账号
-            if request.POST.get('game_pass',  "None") != "None":
+            if request.POST.get('game_pass', "None") != "None":
                 acc.game_pass = request.POST.get('game_pass')  # 密码
             if request.POST.get('info', "None") != "None":
                 acc.info = request.POST.get('info')  # 备注
@@ -26,6 +35,7 @@ def add_account_api(request):  # 账号增加/修改
             acc.free = request.POST.get('free', False)  # 不用打
             acc.save()
             nick.nick_name = request.POST.get('nickname')
+            nick.user_id = user_id
             nick.acc_id_id = acc.id
             if request.POST.get('guard_id', "None") != "None":
                 nick.guard_id = request.POST.get('guard_id')
@@ -103,5 +113,22 @@ def index(request):
     guard_data = GuardList.objects.all()
     pass
 
+
 def set_color(request):
     pass
+
+
+def ref_guards(request):        # 更新舰长信息
+    now_guards = AccTool.get_room_guard()
+    now_guards_uid = []
+
+    for guard in now_guards:
+        now_guards_uid.append(guard['bili_uid'])
+        GuardList.objects.update_or_create(bili_uid=guard['bili_uid'], defaults=guard)
+
+    is_not_guards = GuardList.objects.exclude(bili_uid__in=now_guards_uid)
+    is_not_guards.update(guard_rank=-1)
+
+    return JsonResponse(now_guards, safe=False)
+
+

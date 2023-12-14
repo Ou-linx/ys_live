@@ -8,5 +8,6 @@ urlpatterns = [
     path('api/getall', views.get_all_account_api),
     path('api/get', views.get_account_api),
     path('edit', views.edit_account),
-    path('', views.get_all_account_api)
+    # path('', views.get_all_account_api),
+    path('', views.ref_guards),
 ]

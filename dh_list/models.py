@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import Userconf
 
 
@@ -9,7 +8,7 @@ class GuardList(models.Model):  # 舰长列表
     bili_uid = models.IntegerField()  # b站uid
     Bili_name = models.CharField(max_length=30, unique=True)  # b站用户名
     guard_rank = models.IntegerField()  # 舰长排行榜
-    guard_level = models.IntegerField()  # 舰长等级（舰长、提督、总督）
+    guard_level = models.IntegerField()  # 舰长等级（3舰长、2提督、1总督）
     guard_medal = models.IntegerField()  # 粉丝牌等级
     is_del = models.BooleanField(default=False)  # 逻辑删除
 
@@ -33,18 +32,32 @@ class GameAccount(models.Model):  # 账号表
         db_table = 'dhlist_account'
 
 
-class Nickname(models.Model):
+class LinkAccount(models.Model):
     acc_id = models.OneToOneField(GameAccount, on_delete=models.SET_NULL, null=True, default=None)
     guard_id = models.ForeignKey(GuardList, on_delete=models.SET_NULL, null=True, default=None)
     nick_name = models.CharField(max_length=30, default='', null=True)
+    user_id = models.OneToOneField(Userconf, on_delete=models.SET_NULL, null=True, default=None)
 
-    class Neta:
+    class Meta:
         db_table = 'dhlist_nickname'
 
 
 class TableColor(models.Model):
-    user_id = models.OneToOneField(Userconf)
-    my_color = models.CharField(max_length=40)
-    genshin_color = models.CharField(max_length=40)
-    genshin_bili_color = models.CharField(max_length=40)
-    honkaisr_color = models.CharField(max_length=40)
+    my_color = models.CharField(max_length=40)  # 我的
+    genshin_color = models.CharField(max_length=40)  # 原神
+    genshin_bili_color = models.CharField(max_length=40)  # 原神b服
+    honkaisr_color = models.CharField(max_length=40)  # 崩铁
+    free_acc = models.CharField(max_length=40)  # 不用打号
+    other = models.CharField(max_length=40)  # 其它（旧舰长和仅记录账号
+
+    class Meta:
+        db_table = 'dhlist_color'
+
+
+class UserSetting(models.Model):
+    user_id = models.OneToOneField(Userconf, on_delete=models.SET_NULL, null=True)  # 账号
+    acc_id = models.OneToOneField(GameAccount, on_delete=models.SET_NULL, null=True)  # 账号号主的游戏账号
+    color_id = models.OneToOneField(TableColor, on_delete=models.SET_NULL, null=True)  # 账号表颜色设置
+
+    class Meta:
+        db_table = 'dhlist_setting'
