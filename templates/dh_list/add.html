@@ -25,13 +25,13 @@
 
 <div class="bd-example w-75 position-absolute start-50 translate-middle-x mt-5 rounded-4"
      style="background-color: rgb(255 255 255 / 72%);">
-    <form action="/dhlist/api/login" method="post">
+    <form action="/dhlist/api/edit" method="post">
     <input type="hidden" name="acc_id" id="acc_id" value="{{ sel_data.id }}">
         <div class="row g-3 p-4">
             <div class="col-5 form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
                         aria-label="选择舰长">
-                            <option value=None>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]></option>
+                            <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]></option>
                             {% for guard in guard_data.values %}
                                 <option value="{{ guard.id }}">{{ guard.Bili_name }}</option>
                             {% endfor %}

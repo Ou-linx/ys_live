@@ -65,5 +65,3 @@ class AccTool:
         # uid:B站uid，rank:舰长排名，username:用户名，guard_level:舰长等级，medal_info[medal_level]: 粉丝牌等级
         # print(jz)
         return guard_list
-
-
