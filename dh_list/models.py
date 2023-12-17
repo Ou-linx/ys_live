@@ -42,7 +42,7 @@ class GuardList(models.Model):
 
 class Acc2Guard(models.Model):
     acc_id = models.OneToOneField(AccountList, on_delete=models.CASCADE)
-    guard_id = models.OneToOneField(GuardList, on_delete=models.SET_NULL, blank=True)
+    guard_id = models.OneToOneField(GuardList, on_delete=models.SET_NULL, null=True)
     acc_nickname = models.CharField(max_length=20, blank=True)
     user_id = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
 

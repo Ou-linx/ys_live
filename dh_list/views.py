@@ -1,9 +1,21 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from models import *
+from django.shortcuts import render, redirect
+
+import user.views
+from dh_list.models import *
 
 
 # Create your views here.
+
+def del_account(request):
+    acc_id = request.GET.get('acc_id')
+    account = Acc2Guard.objects.get(acc_id=acc_id)
+    if account.user_id == request.user.id:
+        account.acc_id.is_del = True
+        account.save()
+        return HttpResponse('ok')
+    return HttpResponse('账号鉴权失败')
+
 
 def get_all_acc(request):
     user = UserInfo.objects.get(id=request.user.id)
@@ -151,23 +163,25 @@ def add_edit_account(request):
         return HttpResponse('ok')
 
 
-def del_account(request):
-    acc_id = request.GET.get('acc_id')
-    account = Acc2Guard.objects.get(acc_id=acc_id)
-    if account.user_id == request.user.id:
-        account.acc_id.is_del = True
-        account.save()
-        return HttpResponse('ok')
-    return HttpResponse('账号鉴权失败')
+def is_logined(func):     # 判断是否登录
+    def wapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:   # 判断状态是否为未登录
+            return redirect(user.views.user_login_page)
+        else:
+            return func(request, *args, **kwargs)
+    return wapper
 
 
+@is_logined
 def account_index_page(request):
     return render(request, 'dh_list/index.html')
 
 
+@is_logined
 def account_edit_page(request):
     return render(request, 'dh_list/edit.html')
 
 
+@is_logined
 def account_add_page(request):
     return render(request, 'dh_list/add.html')

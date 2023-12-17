@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from models import *
+from user.models import *
 
 
 # Create your views here.
@@ -10,6 +10,7 @@ from models import *
 
 def user_login(request):
     if request.method == 'POST':
+        print(request.POST)
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
@@ -49,6 +50,7 @@ def user_regiset(request):
 
 def user_edit(request):
     if request.method == 'POST':
+        print(request.POST)
         # 修改信息接受 账号id，密码，b站房间号，b站uid，自定义昵称
         user_id = request.POST.get('id')
         pwd = request.POST.get('password')
@@ -64,8 +66,12 @@ def user_edit(request):
 
 
 def user_login_page(request):
-    render(request, 'user/login.html')
+    if request.method == 'POST':
+        return user_login(request)
+    return render(request, 'user/login.html')
 
 
 def user_regiset_page(request):
-    render(request, 'user/regiset.html')
+    if request.method == 'POST':
+        return user_regiset(request)
+    return render(request, 'user/regiset.html')
