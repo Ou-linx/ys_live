@@ -30,12 +30,13 @@
         <div class="row g-3 p-4">
             <div class="col-5 form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
-                        aria-label="选择舰长" {% if sel_data.nickname.guard_id.Bili_name or sel_data.usersetting.user_id == sel_data.id %}disabled>
+                        aria-label="选择舰长" {% if sel_data.nickname.guard_id.Bili_name or sel_data.usersetting.user_id == sel_data.id %}>
                             <option value="{{ sel_data.nickname.guard_id_id }}">{{ sel_data.nickname.guard_id.Bili_name }}</option>
                         {% else %}>
-                            <option value=None>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]></option>
+                            <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]</option>
+                            <option value="{{ userinfo.bili_uid }}">自己的号</option>
                             {% for guard in guard_data.values %}
-                                <option value="{{ guard.id }}">{{ guard.Bili_name }}</option>
+                                <option value="{{ guard.id }}">{{ guard.bili_name }}</option>
                             {% endfor %}
                         {% endif %}
                 </select>

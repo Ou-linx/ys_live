@@ -20,7 +20,7 @@ class AccountList(models.Model):
 
 class AccStatus(models.Model):
     acc_id = models.OneToOneField(AccountList, on_delete=models.CASCADE)
-    free = models.BooleanField(default=False)  # 不用打（好人啊
+    free = models.BooleanField(default=False, blank=True)  # 不用打（好人啊
     is_ok = models.BooleanField(default=False)  # 打号进度
 
     class Meta:
@@ -41,10 +41,10 @@ class GuardList(models.Model):
 
 
 class Acc2Guard(models.Model):
-    acc_id = models.OneToOneField(AccountList, on_delete=models.CASCADE)
-    guard_id = models.OneToOneField(GuardList, on_delete=models.SET_NULL, null=True)
-    acc_nickname = models.CharField(max_length=20, blank=True)
-    user_id = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
+    acc_id = models.ForeignKey(AccountList, on_delete=models.CASCADE)    # 账号id
+    guard_id = models.ForeignKey(GuardList, on_delete=models.SET_NULL, null=True, blank=True)    # 舰长id
+    acc_nickname = models.CharField(max_length=20, blank=True)      # 账号昵称
+    user_id = models.ForeignKey(UserInfo, on_delete=models.CASCADE)  # 用户id
 
     class Meta:
         db_table = 'dhlist_linkall'

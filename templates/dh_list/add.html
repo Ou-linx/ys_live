@@ -31,9 +31,10 @@
             <div class="col-5 form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
                         aria-label="选择舰长">
-                            <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]></option>
-                            {% for guard in guard_data.values %}
-                                <option value="{{ guard.id }}">{{ guard.Bili_name }}</option>
+                            <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]</option>
+                            <option value="{{ userinfo.bili_uid }}">自己的号</option>
+                            {% for guard in guards.values %}
+                                <option value="{{ guard.id }}">{{ guard.bili_name }}- - -粉丝牌 {{ guard.guard_medal }}级</option>
                             {% endfor %}
                 </select>
                 <label for="floatingInput">舰长</label>

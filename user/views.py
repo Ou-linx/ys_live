@@ -1,11 +1,26 @@
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from user.models import *
 
 
 # Create your views here.
+def is_logined(func):     # 判断是否登录
+    def wapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:   # 判断状态是否为未登录
+            return redirect(user_login_page)
+        else:
+            return func(request, *args, **kwargs)
+    return wapper
+
+
+@is_logined
+def user_index(request):
+    user = request.user.username
+    user_nickname = request.user.userinfo.nickname
+    user_lastlogin = request.user.last_login
+    return render(request, 'user/index.html', locals())
 
 
 def user_login(request):
@@ -16,7 +31,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse('ok')
+            return redirect(user_index)
         else:
             return HttpResponse('账号或密码错误！')
 
@@ -24,12 +39,15 @@ def user_login(request):
 def user_logout(request):  # 注销登录
     if request.user.is_authenticated:  # 如果已经登录则注销
         logout(request)
+        return redirect(user_login_page)
     else:
-        pass
+        return redirect(user_login_page)
     # return redirect()
 
 
 def user_regiset(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'code': -1, 'data': 'You are already logined'})
     if request.method == 'POST':
         # 注册需要 账号，密码，b站房间号，b站uid，自定义昵称
         uname = request.POST.get('username')
@@ -48,6 +66,7 @@ def user_regiset(request):
         return HttpResponse('创建成功！')
 
 
+@is_logined
 def user_edit(request):
     if request.method == 'POST':
         print(request.POST)
@@ -75,3 +94,8 @@ def user_regiset_page(request):
     if request.method == 'POST':
         return user_regiset(request)
     return render(request, 'user/regiset.html')
+
+
+@is_logined
+def user_edit_page(request):
+    return HttpResponse('功能搭建中。。。')
