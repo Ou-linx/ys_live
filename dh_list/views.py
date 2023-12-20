@@ -7,21 +7,23 @@ from dh_list.models import *
 
 # Create your views here.
 
-def is_logined(func):     # 判断是否登录
+def is_logined(func):  # 判断是否登录
     def wapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:   # 判断状态是否为未登录
+        if not request.user.is_authenticated:  # 判断状态是否为未登录
             return redirect(user.views.user_login_page)
         else:
             return func(request, *args, **kwargs)
+
     return wapper
 
 
-def api_is_logined(func):     # 判断是否登录
+def api_is_logined(func):  # 判断是否登录
     def wapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:   # 判断状态是否为未登录
+        if not request.user.is_authenticated:  # 判断状态是否为未登录
             return JsonResponse({'code': 403, 'data': 'User is not loggin'})
         else:
             return func(request, *args, **kwargs)
+
     return wapper
 
 
@@ -52,18 +54,17 @@ def get_all_acc(request):
             'not_do_acc': [],
             'other': [],
         },
-        # 'color': {
-        #     'my_acc': user.tablecolor.my_color,
-        #     'bili_genshin': user.tablecolor.genshin_bili_color,
-        #     'mihoyo_genshin': user.tablecolor.genshin_color,
-        #     'honkaisr': user.tablecolor.honkaisr_color,
-        #     'more_game': user.tablecolor.more_game_color,
-        #     'not_do_acc': user.tablecolor.free_acc,
-        #     'other': user.tablecolor.more_game_color,
-        # },
+        'color': {
+            'my_acc': user.tablecolor.my_color,
+            'bili_genshin': user.tablecolor.genshin_bili_color,
+            'mihoyo_genshin': user.tablecolor.genshin_color,
+            'honkaisr': user.tablecolor.honkaisr_color,
+            'more_game': user.tablecolor.more_game_color,
+            'not_do_acc': user.tablecolor.free_acc,
+            'other': user.tablecolor.more_game_color,
+        },
     }
     have_acc_guards = []
-    print(accounts.values())
     for acc in accounts:
         acc_json = {
             "guard_id": acc.guard_id,  # 舰长表id
@@ -84,19 +85,19 @@ def get_all_acc(request):
         }
         if acc.guard_id: have_acc_guards.append(acc.guard_id.bili_uid)
         # 合成输出json
-        if acc.user_id_id == user.id:
+        if acc.acc_id.accstatus.is_user.__str__() == user.bili_uid.__str__():
             res_json['data']['my_acc'].append(acc_json)
         elif acc.acc_id.is_del:
             pass
         elif acc.acc_id.accstatus.free:
             res_json['data']['not_do_acc'].append(acc_json)
-        elif acc.acc_id.game_class == '1':
+        elif acc.acc_id.game_class in [1, 101]:
             res_json['data']['mihoyo_genshin'].append(acc_json)
-        elif acc.acc_id.game_class == '2':
+        elif acc.acc_id.game_class in [2, 102]:
             res_json['data']['bili_genshin'].append(acc_json)
-        elif acc.acc_id.game_class == '3':
+        elif acc.acc_id.game_class in [3, 103]:
             res_json['data']['honkaisr'].append(acc_json)
-        elif acc.acc_id.game_class == '99':
+        elif acc.acc_id.game_class == '999':
             res_json['data']['more_game'].append(acc_json)
         else:
             res_json['data']['other'].append(acc_json)
@@ -153,7 +154,6 @@ def add_edit_account(request):
     if request.method == 'POST':
         user_id = request.user.userinfo
         ret_msg = "账号添加成功！"
-        print(request.POST)
         acc_id = request.POST.get('acc_id')
         username = request.POST.get('game_acc')
         password = request.POST.get('game_pass')
@@ -164,32 +164,29 @@ def add_edit_account(request):
         nickname = request.POST.get('nickname')
         if username is None or username == '':
             return HttpResponse('账号不能为空')
-        if guard_id == '':
-            guard_id = None
-            if nickname == '':
-                return HttpResponse('请选择舰长或设置昵称')
+        if guard_id == '' and nickname == '':
+            return HttpResponse('请选择舰长或设置昵称')
         # 修改账号需要字段：账号id，账号（必须），密码，备注，账号类型，是否不用打，关联的舰长id（可空），设置的昵称【没有舰长id则必须有】
-        if acc_id != '':    # 修改账号
-            acc = Acc2Guard.objects.get(acc_id=acc_id)
-            if acc.user_id == request.user.id:
-                account = acc
-                account.guard_id = guard_id
-                account.acc_nickname = nickname
-                account.acc_id.game_acc = username
-                account.acc_id.game_pass = password
-                account.acc_id.info = info
-                account.acc_id.game_class = acc_class
-                account.acc_id.accstatus.free = is_free
-                account.save()
+        if acc_id != '':  # 修改账号
+            account = Acc2Guard.objects.filter(acc_id=acc_id)
+            if account.get().user_id_id == request.user.id:
+                account.update(guard_id=guard_id if guard_id != '' and guard_id != 'myacc' else None,
+                               acc_nickname=nickname)
+                acc_data1 = AccountList.objects.filter(id=acc_id)
+                acc_data1.update(game_acc=username, game_pass=password, info=info, game_class=acc_class)
+                acc_data2 = AccStatus.objects.filter(acc_id=acc_id)
+                acc_data2.update(free=is_free, is_user=user_id.bili_uid if guard_id == 'myacc' else 0)
                 return HttpResponse('修改 ok')
             else:
                 return HttpResponse('账号鉴权失败')
         # 增加账号
         # 增加账号需要字段：账号（必须），密码，备注，账号类型，是否不用打，关联的舰长id（可空），设置的昵称【没有舰长id则必须有】
-        acc_id = AccountList.objects.create(game_acc=username,game_pass=password,info=info,game_class=acc_class)
+        acc_id = AccountList.objects.create(game_acc=username, game_pass=password, info=info, game_class=acc_class)
         acc_id.save()
-        Acc2Guard.objects.create(acc_id=acc_id,guard_id=guard_id,user_id=user_id,acc_nickname=nickname).save()
-        AccStatus.objects.create(acc_id=acc_id,free=is_free,is_ok=False).save()
+        Acc2Guard.objects.create(acc_id=acc_id, guard_id=guard_id if guard_id != '' else None, user_id=user_id,
+                                 acc_nickname=nickname).save()
+        AccStatus.objects.create(acc_id=acc_id, free=is_free, is_user=user_id.bili_uid if guard_id == 'myacc' else 0,
+                                 is_ok=False).save()
         return HttpResponse('增加 ok')
 
 
@@ -198,7 +195,8 @@ def ref_guards(request):  # 更新舰长信息
     import requests
     roomid = request.user.userinfo.bili_liveroom
     uid = request.user.userinfo.bili_uid
-    url = (f"https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topList?roomid={roomid}&ruid={uid}&page_size=29&page=1")
+    path = 'https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topList'
+    url = f"{path}?roomid={roomid}&ruid={uid}&page_size=29&page=1"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/118.0.0.0 Safari/537.36'
@@ -208,8 +206,7 @@ def ref_guards(request):  # 更新舰长信息
     alljz = jztop + jzlist
     if bilidata["data"]["info"]["page"]:  # b站接口限制单页数量，超过一页的数据获取
         for pagelist in range(1, (bilidata["data"]["info"]["page"])):
-            url = (f"https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topList?"
-                   f"roomid={roomid}&ruid={uid}&page_size=29&page={pagelist + 1}")
+            url = f"{path}roomid={roomid}&ruid={uid}&page_size=29&page={pagelist + 1}"
             bilidata = requests.get(url, headers=headers, verify=False).json()
             jz1 = bilidata["data"]["list"]
             alljz += jz1
@@ -243,16 +240,45 @@ def ref_guards(request):  # 更新舰长信息
 
 @is_logined
 def account_index_page(request):
-    return render(request, 'dh_list/index.html')
+    colors = TableColor.objects.get(user_id_id=request.user.userinfo.id)
+    return render(request, 'dh_list/index.html',locals())
 
 
 @is_logined
 def account_edit_page(request):
-    return render(request, 'dh_list/edit.html')
+    guards = GuardList.objects.filter(room_id=request.user.userinfo.bili_liveroom, is_del=False)
+    account = Acc2Guard.objects.get(acc_id=request.GET.get('id'))
+    now_guard = account.guard_id_id
+    if request.user.userinfo.bili_uid.__str__() == account.acc_id.accstatus.is_user.__str__():
+        my_acc = True
+    return render(request, 'dh_list/edit.html', locals())
 
 
 @is_logined
 def account_add_page(request):
+    if request.GET.get('guardid'):
+        guard_id = GuardList.objects.get(id=request.GET.get('guardid')).id
     guards = GuardList.objects.filter(room_id=request.user.userinfo.bili_liveroom, is_del=False)
-    print(guards.values())
-    return render(request, 'dh_list/add.html',locals())
+    return render(request, 'dh_list/add.html', locals())
+
+
+@is_logined
+def setorcl_ok(request):  # 取消或设置完成状态
+    accid = request.GET.get('id')
+    if accid == 'all':
+        acc = AccStatus.objects.filter(acc_id__acc2guard__user_id_id=request.user.id)
+        acc.update(is_ok=False)
+        return JsonResponse({'code': 200, 'data': 'ok'}, safe=True)
+    account = Acc2Guard.objects.get(acc_id_id=accid)
+    if account.user_id_id == request.user.id:
+        acc = AccStatus.objects.get(acc_id=accid)
+        acc.is_ok = True if acc.is_ok is False else False
+        acc.save()
+        return JsonResponse({'code': 200, 'data': 'ok'}, safe=True)
+
+
+@is_logined
+def color_set(request): # 颜色设置
+    colors = TableColor.objects.get(user_id_id=request.user.userinfo.id)
+    return render(request,'dh_list/color_setting.html',locals())
+

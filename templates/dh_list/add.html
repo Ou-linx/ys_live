@@ -32,9 +32,9 @@
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
                         aria-label="选择舰长">
                             <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]</option>
-                            <option value="{{ userinfo.bili_uid }}">自己的号</option>
+                            <option value="myacc">自己的号</option>
                             {% for guard in guards.values %}
-                                <option value="{{ guard.id }}">{{ guard.bili_name }}- - -粉丝牌 {{ guard.guard_medal }}级</option>
+                                <option value="{{ guard.id }}"{% if guard.id == guard_id %} selected{% endif %}>{{ guard.bili_name }} - - 粉丝牌 {{ guard.guard_medal }}级</option>
                             {% endfor %}
                 </select>
                 <label for="floatingInput">舰长</label>
@@ -66,9 +66,12 @@
                     <option value="1" selected>原神官服（默认）</option>
                     <option value="2">原神B服</option>
                     <option value="3">崩铁</option>
+                    <option value="101">原神官服(非舰长单）</option>
+                    <option value="102">原神B服（非舰长单）</option>
+                    <option value="103">崩铁（非舰长单）</option>
                     <option value="99">其它</option>
                 </select>
-                <label for="floatingInput">选择账号类型</label>
+                <label for="floatingInput">选择账号类型（非舰长单在此处选择标记)</label>
             </div>
             <div class="ms-3 form-check">
                 <input class="form-check-input" type="checkbox" value="True" name="free" id="free">

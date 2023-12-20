@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from user.models import *
+from dh_list.models import TableColor
 
 
 # Create your views here.
@@ -63,6 +64,7 @@ def user_regiset(request):
         userconf = UserInfo.objects.create(user_default=newuser, bili_uid=bili_uid,
                                            bili_liveroom=bili_liveroom, nickname=nname)
         userconf.save()
+        TableColor.objects.create(user_id=userconf)
         return HttpResponse('创建成功！')
 
 

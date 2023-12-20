@@ -26,56 +26,56 @@
 <div class="bd-example w-75 position-absolute start-50 translate-middle-x mt-5 rounded-4"
      style="background-color: rgb(255 255 255 / 72%);">
     <form action="/dhlist/api/edit" method="post">
-    <input type="hidden" name="acc_id" id="acc_id" value="{{ sel_data.id }}">
+    <input type="hidden" name="acc_id" id="acc_id" value="{{ account.id }}">
         <div class="row g-3 p-4">
             <div class="col-5 form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
-                        aria-label="选择舰长" {% if sel_data.nickname.guard_id.Bili_name or sel_data.usersetting.user_id == sel_data.id %}>
-                            <option value="{{ sel_data.nickname.guard_id_id }}">{{ sel_data.nickname.guard_id.Bili_name }}</option>
-                        {% else %}>
+                        aria-label="选择舰长">
                             <option value>请选择。。。 [非现任或往期舰长请不要选择，填写昵称即可]</option>
-                            <option value="{{ userinfo.bili_uid }}">自己的号</option>
-                            {% for guard in guard_data.values %}
-                                <option value="{{ guard.id }}">{{ guard.bili_name }}</option>
+                            <option value="myacc"{% if my_acc %} selected{% endif %}>自己的号</option>
+                            {% for guard in guards.values %}
+                                <option value="{{ guard.id }}"{% if guard.id == now_guard %} selected{% endif %}>{{ guard.bili_name }}</option>
                             {% endfor %}
-                        {% endif %}
                 </select>
                 <label for="floatingInput">舰长</label>
             </div>
             <div class="col-7 form-floating">
                 <input type="text" class="form-control pb-1 pt-4 fs-4 text" style="height: 65px" name="nickname" id="nickname"
-                       placeholder="舰长昵称" value="{{ sel_data.nickname.nick_name }}" required>
+                       placeholder="舰长昵称" value="{{ account.acc_nickname }}" required>
                 <label for="floatingInput">舰长昵称</label>
             </div>
 
             <div class="col-12 form-floating">
                 <input type="text" class="form-control pb-1 pt-4 fs-4 text" style="height: 65px" name="game_acc" id="game_acc"
-                       placeholder="请输入账号" value="{{ sel_data.game_acc }}" required>
+                       placeholder="请输入账号" value="{{ account.acc_id.game_acc }}" required>
                 <label for="floatingPassword">账号</label>
             </div>
             <div class="col-12 form-floating">
                 <input type="text" class="form-control pb-1 pt-4 fs-4 text" style="height: 65px" name="game_pass" id="game_pass"
-                       placeholder="请输入密码" value="{{ sel_data.game_pass }}">
+                       placeholder="请输入密码" value="{{ account.acc_id.game_pass }}">
                 <label for="floatingPassword">密码</label>
             </div>
             <div class="form-floating">
         <textarea class="form-control" placeholder="填写备注信息" name="info" id="info"
-                  style="height: 100px">{{ sel_data.info }}</textarea>
+                  style="height: 100px">{{ account.acc_id.info }}</textarea>
                 <label for="floatingTextarea2">备注信息</label>
             </div>
             <div class="form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="game_class" id="game_class" style="height: 65px"
                         aria-label="选择账号类型">
-                    <option value="1" selected>原神官服（默认）</option>
-                    <option value="2">原神B服</option>
-                    <option value="3">崩铁</option>
-                    <option value="99">其它</option>
+                    <option value="1"{% if account.acc_id.game_class == 1 %} selected{% endif %}>原神官服（默认）</option>
+                    <option value="2"{% if account.acc_id.game_class == 2 %} selected{% endif %}>原神B服</option>
+                    <option value="3"{% if account.acc_id.game_class == 3 %} selected{% endif %}>崩铁</option>
+                    <option value="101"{% if account.acc_id.game_class == 101 %} selected{% endif %}>原神官服(非舰长单）</option>
+                    <option value="102"{% if account.acc_id.game_class == 102 %} selected{% endif %}>原神B服（非舰长单）</option>
+                    <option value="103"{% if account.acc_id.game_class == 103 %} selected{% endif %}>崩铁（非舰长单）</option>
+                    <option value="99"{% if account.acc_id.game_class == 999 %} selected{% endif %}>其它</option>
                 </select>
-                <label for="floatingInput">选择账号类型</label>
+                <label for="floatingInput">选择账号类型（非舰长单在此处选择标记)</label>
             </div>
             <div class="ms-3 form-check">
                 <input class="form-check-input" type="checkbox" value="True" name="free" id="free"
-                       {% if sel_data.free is True %}checked{% endif %}>
+                       {% if account.acc_id.accstatus.free %}checked{% endif %}>
                 <label class="form-check-label" for="invalidCheck2">这个账号不用打！！！</label>
             </div>
             <div class="d-grid gap-2 pt-1 mb-4">

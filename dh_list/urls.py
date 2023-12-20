@@ -8,4 +8,5 @@ urlpatterns = [
     path('api/reguards', views.ref_guards),
     path('api/edit', views.add_edit_account),
     path('api/acc_all', views.get_all_acc),
+    path('api/set_ok', views.setorcl_ok),
 ]

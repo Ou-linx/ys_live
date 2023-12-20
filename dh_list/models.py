@@ -20,6 +20,7 @@ class AccountList(models.Model):
 
 class AccStatus(models.Model):
     acc_id = models.OneToOneField(AccountList, on_delete=models.CASCADE)
+    is_user = models.IntegerField(default=0)
     free = models.BooleanField(default=False, blank=True)  # 不用打（好人啊
     is_ok = models.BooleanField(default=False)  # 打号进度
 
@@ -52,13 +53,13 @@ class Acc2Guard(models.Model):
 
 class TableColor(models.Model):
     user_id = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
-    my_color = models.CharField(max_length=40)  # 我的
-    genshin_color = models.CharField(max_length=40)  # 原神
-    genshin_bili_color = models.CharField(max_length=40)  # 原神b服
-    honkaisr_color = models.CharField(max_length=40)  # 崩铁
-    more_game_color = models.CharField(max_length=40)  # 其它游戏
-    free_acc = models.CharField(max_length=40)  # 不用打号
-    other = models.CharField(max_length=40)  # 其它（旧舰长和仅记录账号
+    my_color = models.CharField(default='#ffffff', max_length=40)  # 我的
+    genshin_color = models.CharField(default='#ffffff', max_length=40)  # 原神
+    genshin_bili_color = models.CharField(default='#ffffff', max_length=40)  # 原神b服
+    honkaisr_color = models.CharField(default='#ffffff', max_length=40)  # 崩铁
+    more_game_color = models.CharField(default='#ffffff', max_length=40)  # 其它游戏
+    free_acc = models.CharField(default='#ffffff', max_length=40)  # 不用打号
+    other = models.CharField(default='#ffffff', max_length=40)  # 其它（旧舰长和仅记录账号
 
     class Meta:
         db_table = 'dhlist_color'
