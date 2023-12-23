@@ -1,12 +1,40 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>表格颜色设置</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        .my_acc {
+            background: {{ colors.my_color }};
+        }
+
+        .mihoyo_genshin {
+            background: {{ colors.genshin_color }};
+        }
+
+        .bili_genshin {
+            background: {{ colors.genshin_bili_color }};
+        }
+
+        .honkaisr {
+            background: {{ colors.honkaisr_color }};
+        }
+
+        .more_game {
+            background: {{ colors.more_game_color }};
+        }
+
+        .not_do_acc {
+            background: {{ colors.free_acc }};
+        }
+
+        .other {
+            background: {{ colors.other }};
+        }
+    </style>
 </head>
 <body style="background-color: pink">
 <div class="container-fluid g-0">
@@ -24,74 +52,136 @@
     <div class="mt-4 rounded-4"
          style="background-color: rgb(255 255 255 / 72%);">
         <div class="p-2 table-responsive">
-            <table class="table table-bordered border-white m-0">
-                <tbody>
-                <tr class="text-center fw-bold fs-5" style="background: blue;color: white;">
-                    <th class="col-2">舰长</th>
-                    <th class="col-3">账号</th>
-                    <th class="col-3">密码</th>
-                    <th class="col-3">备注</th>
-                    <th class="col-1">颜色</th>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50 my_color" style="background: {{ colors.my_color }}">
-                    <td class="col-2">我的账号</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.my_color }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.genshin_bili_color }}">
-                    <td class="col-2">原神B服</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.genshin_bili_color }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.genshin_color }}">
-                    <td class="col-2">原神官服</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.genshin_color }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.honkaisr_color }}">
-                    <td class="col-2">星铁</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.honkaisr_color }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.more_game_color }}">
-                    <td class="col-2">其它游戏</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.more_game_color }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.free_acc }}">
-                    <td class="col-2">不用打号舰长</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.free_acc }}" title="选择颜色"></td>
-                </tr>
-                <tr class="text-center align-middle fs-5 vh-50" style="background: {{ colors.other }}">
-                    <td class="col-2">其它账号</td>
-                    <td class="col-3">account</td>
-                    <td class="col-3">password</td>
-                    <td class="col-3">info message</td>
-                    <td class="col-1"><input type="color" value="{{ colors.other }}" title="选择颜色"></td>
-                </tr>
-                </tbody>
-            </table>
+            <form id="colorForm">
+                <table class="table table-bordered border-white m-0">
+                    <tbody>
+                    <tr class="text-center fw-bold fs-5 my_acc" style="background: blue;color: white;">
+                        <th class="col-2">舰长</th>
+                        <th class="col-3">账号</th>
+                        <th class="col-3">密码</th>
+                        <th class="col-3">备注</th>
+                        <th class="col-1">颜色</th>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 my_color" style="background: {{ colors.my_color }}">
+                        <td class="col-2">我的账号</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="my_color" value="{{ colors.my_color }}"
+                                                 title="选择颜色"></td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 bili_genshin"
+                        style="background: {{ colors.genshin_bili_color }}">
+                        <td class="col-2">原神B服</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="genshin_bili_color"
+                                                 value="{{ colors.genshin_bili_color }}" title="选择颜色">
+                        </td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 mihoyo_genshin"
+                        style="background: {{ colors.genshin_color }}">
+                        <td class="col-2">原神官服</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="genshin_color" value="{{ colors.genshin_color }}"
+                                                 title="选择颜色"></td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 honkaisr"
+                        style="background: {{ colors.honkaisr_color }}">
+                        <td class="col-2">星穹铁道</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="honkaisr_color" value="{{ colors.honkaisr_color }}"
+                                                 title="选择颜色"></td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 more_game"
+                        style="background: {{ colors.more_game_color }}">
+                        <td class="col-2">其它游戏</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="more_game_color"
+                                                 value="{{ colors.more_game_color }}" title="选择颜色">
+                        </td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 not_do_acc"
+                        style="background: {{ colors.free_acc }}">
+                        <td class="col-2">不用打号舰长</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="not_do_acc_color" value="{{ colors.free_acc }}"
+                                                 title="选择颜色"></td>
+                    </tr>
+                    <tr class="text-center align-middle fs-5 vh-50 other" style="background: {{ colors.other }}">
+                        <td class="col-2">其它账号</td>
+                        <td class="col-3">account</td>
+                        <td class="col-3">password</td>
+                        <td class="col-3">info message</td>
+                        <td class="col-1"><input type="color" name="other" value="{{ colors.other }}" title="选择颜色">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="d-grid gap-2 pt-3 mb-1">
+                    <button class="btn btn-primary btn-lg" type="submit">确定并提交
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/dh_list/utils.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 获取所有颜色选择器
+        const colorPickers = document.querySelectorAll('input[type="color"]');
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
-<script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+        colorPickers.forEach(function (colorPicker) {
+            // 监听颜色选择器的颜色变化事件
+            colorPicker.addEventListener('input', function () {
+                // 获取当前颜色选择器所在的行
+                const row = colorPicker.closest('tr');
+
+                // 更新行的背景颜色
+                row.style.backgroundColor = colorPicker.value;
+            });
+        });
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#colorForm').on('submit', function (e) {
+            e.preventDefault(); // 阻止表单的默认提交行为
+
+            // 获取所有颜色选择器的值
+            {#const colors = {};#}
+            const colors = $(this).serialize();
+
+            // 使用ajax提交表单数据
+            ajaxCall('/dhlist/api/setcolor', 'POST', colors, function (response) {
+                    {#console.log('Success:', response);#}
+                    if (response.code === 200) {
+                        createOrShowModal('保存成功！');
+                    } else {
+                        console.log('Error:', response.message);
+                    }
+                },
+                function (xhr, status, error) {
+                    {#console.error('Error:', status, error);#}
+                    createOrShowModal('出现错误！！')
+                }
+            );
+        });
+    })
+</script>
 </body>
 </html>
