@@ -26,7 +26,7 @@
 <div class="bd-example w-75 position-absolute start-50 translate-middle-x mt-5 rounded-4"
      style="background-color: rgb(255 255 255 / 72%);">
     <form id="editForm">
-    <input type="hidden" name="acc_id" id="acc_id" value="{{ account.id }}">
+    <input type="hidden" name="acc_id" id="acc_id" value="{{ account.acc_id_id }}">
         <div class="row g-3 p-4">
             <div class="col-5 form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="guard_id" id="guard_id" style="height: 65px"
@@ -63,13 +63,15 @@
             <div class="form-floating">
                 <select class="form-select pb-1 pt-4 fs-5 text" name="game_class" id="game_class" style="height: 65px"
                         aria-label="选择账号类型">
-                    <option value="1"{% if account.acc_id.game_class == 1 %} selected{% endif %}>原神官服（默认）</option>
-                    <option value="2"{% if account.acc_id.game_class == 2 %} selected{% endif %}>原神B服</option>
-                    <option value="3"{% if account.acc_id.game_class == 3 %} selected{% endif %}>崩铁</option>
+                    <option value="1"{% if account.acc_id.game_class == 1 or account.acc_id.game_class == 101 and account.guard_id %} selected{% endif %}>原神官服（默认）</option>
+                    <option value="2"{% if account.acc_id.game_class == 2 or account.acc_id.game_class == 102 and account.guard_id %} selected{% endif %}>原神B服</option>
+                    <option value="3"{% if account.acc_id.game_class == 3 or account.acc_id.game_class == 103 and account.guard_id %} selected{% endif %}>崩铁</option>
+                {% if not account.guard_id %}
                     <option value="101"{% if account.acc_id.game_class == 101 %} selected{% endif %}>原神官服(非舰长单）</option>
                     <option value="102"{% if account.acc_id.game_class == 102 %} selected{% endif %}>原神B服（非舰长单）</option>
                     <option value="103"{% if account.acc_id.game_class == 103 %} selected{% endif %}>崩铁（非舰长单）</option>
-                    <option value="99"{% if account.acc_id.game_class == 999 %} selected{% endif %}>其它</option>
+                {% endif %}
+                    <option value="999"{% if account.acc_id.game_class == 999 %} selected{% endif %}>其它</option>
                 </select>
                 <label for="floatingInput">选择账号类型（非舰长单在此处选择标记)</label>
             </div>

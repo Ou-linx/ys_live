@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body style="background: plum">
+<div class="container vh-100">
+    <div class="container position-absolute top-50 start-50 translate-middle"
+         style="background-color: rgb(255 255 255 / 72%); width: 30%;">
+        <div class="text-center fs-2 text-primary fw-bold my-3 py-4">欢迎</div>
+        <div class="text-center my-3 pt-1">
+            <button type="button" class="btn btn-outline-success btn-lg" style="width: 50%"
+                    onclick="window.location.href = '/user/login'">登录</button>
+        </div>
+        <div class="text-center my-3 pt-1">
+            <button type="button" class="btn btn-outline-success btn-lg" style="width: 50%"
+                    onclick="window.open('https://pan.xuanol.com')">前往网盘</button>
+        </div>
+        <div class="text-center my-3 pt-1">
+            <button type="button" class="btn btn-outline-success btn-lg" style="width: 50%"
+                    onclick="window.open('https://video.xuanol.com')">前往番剧站</button>
+        </div>
+        <div class="text-center my-3 pt-1">
+            <button type="button" class="btn btn-outline-success btn-lg" style="width: 50%" disabled>等待添加...</button>
+        </div>
+        <div class="pt-2"></div>
+    </div>
+    <div class="position-absolute bottom-0 end-0">
+        <div>
+            <a class="nav-link" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank"
+               style="color:#409EFF;">
+                <i class="fa-solid fa-shield-check" style="color:#409EFF;" aria-hidden="true"></i>
+                鄂ICP备20010501号
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

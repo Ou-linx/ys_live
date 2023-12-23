@@ -66,10 +66,12 @@
                     <option value="1" selected>原神官服（默认）</option>
                     <option value="2">原神B服</option>
                     <option value="3">崩铁</option>
+                    {% if not guard_id %}
                     <option value="101">原神官服(非舰长单）</option>
                     <option value="102">原神B服（非舰长单）</option>
                     <option value="103">崩铁（非舰长单）</option>
-                    <option value="99">其它</option>
+                    {% endif %}
+                    <option value="999">其它</option>
                 </select>
                 <label for="floatingInput">选择账号类型（非舰长单在此处选择标记)</label>
             </div>

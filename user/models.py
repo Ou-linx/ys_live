@@ -9,6 +9,8 @@ class UserInfo(models.Model):
     nickname = models.CharField(max_length=20)
     bili_liveroom = models.CharField(max_length=20, unique=True)  # b站房间
     bili_uid = models.CharField(max_length=20)  # b站uid
+    fans = models.IntegerField(default=0)
+    likes = models.IntegerField(default=0)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     is_del = models.BooleanField(default=False)
