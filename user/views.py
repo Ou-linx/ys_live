@@ -89,6 +89,8 @@ def user_edit(request):
 def user_login_page(request):
     if request.method == 'POST':
         return user_login(request)
+    if request.user.is_authenticated:  # 判断状态是否为已登录
+        return redirect(user_index)
     return render(request, 'user/login.html')
 
 
